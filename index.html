@@ -224,7 +224,7 @@
     <div class="card-body">
       <h5 class="card-title">Total Score : {{total_point}}</h5>
       <p class="card-text">
-        <b> <span class="text-primary mr-2">Score Level ini: {{point}}</span> </b> <span class="text-success mr-2">Correct: {{correct}}</span> 
+        <b> <span class="text-primary mr-2">Score Level <button class="btn btn-sm btn-outline-success" > <b>{{level+1}}</b></button>  : {{point}}</span> </b> <span class="text-success mr-2">Correct: {{correct}}</span> 
         <span @click="showKataSalah= !showKataSalah; showHasil=false;" class="btn btn-sm btn-outline-danger">Wrong: {{wrong}}</span>
       </p>
       <button @click="showKataSalah=false; showHasil=false;" class="btn btn-primary">Close</button>
@@ -549,6 +549,7 @@
           this.soal_ke = 0;
         },
         pilihLevel(n){
+          this.showHasil=false;
           this.level = n;
           soal_ke=0;
           this.correct = 0;
