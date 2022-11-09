@@ -90,7 +90,9 @@
               <button v-if="tombolStart" class="navbar btn btn-warning btn-lg" @click="start">Start Game</button>
 
         <!-- start game -->
-        <a v-else @click="mshow1000kalimat" class="navbar-brand" href="#"><h1>Learn Arabic-English</h1></a>
+        <!-- <a v-else @click="mshow1000kalimat" class="navbar-brand" href="#"><h1>Learn Arabic-English</h1></a> -->
+        <a v-else @click="mshow1000kalimat" class="navbar-brand" href="#"><h1>Learn </h1></a>
+
         <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
           <div class="navbar-nav">
             <!-- <li @click="mshow1000kata()" class="nav-item nav-link text-primary" href="">1000 kata</li> -->
@@ -135,16 +137,16 @@
 
               <div>
                 <div class="form-group">
-                  <input v-model="email" type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="masukkan email">
+                  <input v-model="kritik.email" type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="masukkan email">
                 </div>
 
                 <div class="form-group">
-                  <input v-model="nama" type="text" class="form-control" id="nama" aria-describedby="emailHelp" placeholder="masukkan nama">
+                  <input v-model="kritik.nama" type="text" class="form-control" id="nama" aria-describedby="emailHelp" placeholder="masukkan nama">
                 </div>
 
                 <div class="form-group">
                   <label for="saran">Kritik / saran</label>
-                  <textarea v-model="kritik" class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+                  <textarea v-model="kritik.kritik" class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
                 </div>
                 
                 <button @click="mkirim" class="btn btn-primary">Kirim</button>
@@ -306,6 +308,9 @@
                   <br>
                   <br>
 
+
+                  <br><br>
+
                   <input v-model="jenis_soal" type="radio" id="age3" name="age1" value="1">
                   <label for="age1"> per level kata <b class="text-primary"> <span @click="mshow5000kata"> ({{jumlahSoal}} soal) </span></b></label>
                   <input class="ml-5" v-model="jenis_soal" type="radio" id="age4" name="age1" value="2">
@@ -428,6 +433,16 @@
       
       
     </nav>
+
+    <div v-if="iklan"   class="iklan text-center  d-flex align-items-center justify-content-center" style="position: absolute; top:0; left:0; width: 100%; height: 100%; background-color: lightgreen;">
+      <div class="container">
+        <p>Untuk mendukung web ini, mohon klik link iklan tokopedia berikut :</p>
+        <a :href="dataIklan[iklanKe].link" target="_blank" @click="tutupIklan">
+                      <button class="btn btn-success">Tokopedia {{dataIklan[iklanKe].nama}}</button>
+                    </a>
+
+      </div>
+    </div>
     
 </div>
 
@@ -479,6 +494,21 @@
 
 
 
+        },
+        ambil5000(){
+              var url ="https://script.google.com/macros/s/AKfycby3SieDanWEKR56NOLQAhXtJ50lDoLfBwXzzyz8s3LAlo-d68lMbUu0oAU33LzrcQkYQA/exec?action=read&table=inggris";
+              $.getJSON(url, function (json) {
+                app.dataTambahan = json.data;
+                app.dataSoal = app.dataTambahan;
+              });
+        },
+        ambilIklan(){
+              var url ="https://script.google.com/macros/s/AKfycby3SieDanWEKR56NOLQAhXtJ50lDoLfBwXzzyz8s3LAlo-d68lMbUu0oAU33LzrcQkYQA/exec?action=read&table=iklan";
+              $.getJSON(url, function (json) {
+                app.dataIklan = json.data;
+                app.acak(app.dataIklan);
+                // app.dataSoal = app.dataTambahan;
+              });
         },
         say(m) {
           var msg = new SpeechSynthesisUtterance();
@@ -658,12 +688,70 @@
                 });
             },
         mkirim(){
-          // this.loading = true;
-//          alert('hai');
-          // gscript
-          // google.script.run.AddKritik(this.email, this.nama, this.kritik );
+
+                // if (this.datProg.tglProgress && this.datProg.progres) {
+                let d = new Date();
+                var tgl = d.getDate();
+                var bln = d.getMonth();
+                var thn = d.getFullYear();
+                var jam = d.getHours();
+                var menit = d.getMinutes();
+                var detik = d.getSeconds();
+
+                var waktu1 = thn + "-" + bln + "-" + tgl + "   (" + jam + ":" + menit + ":" + detik + ")"
+                // alert(waktu1)
+                this.kritik.waktu = waktu1;
+
+                // var ikegiatan = this.flash1.id.toString();
+                // var ideadline = this.tglProgres.toString();
+                // var idetail = this.progres.toString();
+                // this.datProg.id = waktu1;
+                // this.datProg.idMasalah = this.flash1.id.toString();
+
+                // this.datProg.progress = encodeURIComponent(this.datProg.progress);
+                // this.datProg.log = 1;
+
+                // var istatus = 1;
+                // var aaaaaaaaaaa = JSON.stringify(this.datProg);
+                // console.log(aaaaaaaaaaa);
+                var lin = `https://script.google.com/macros/s/AKfycby3SieDanWEKR56NOLQAhXtJ50lDoLfBwXzzyz8s3LAlo-d68lMbUu0oAU33LzrcQkYQA/exec?action=insert&table=kritik&data=${JSON.stringify(this.kritik)}`;
+
+                // var lin = `https://script.google.com/macros/s/AKfycbyZFjDBgwz2oE_pEwKb3dW8GQsAm1snHxYpFIQZFFVIN7Ur3y6nhQ1hDYXJWvX5xSJZNw/exec?action=insert&table=progress&data={"id":${waktu1}, "idMasalah":"'${ikegiatan}","tglprogress":"'${ideadline}","progress":"'${idetail}","log":"1"}`;
+
+                // this.test = lin;
+                this.urll = lin;
+
+                // fetch(lin)
+                //   .then(() => {
+                //     app.progres = "";
+                //     app.datProg.progress = decodeURIComponent(app.datProg.progress);
+                //     app.dataProgress.push(app.datProg);
+                //   })
+
+
+                //metode lama pake ajax
+                $.ajax({
+                    type: "GET",
+                    url: lin,
+                    crossDomain: true,
+                    dataType: "jsonp",
+                    dataType: "text",
+                    success: function (resultData) {
+                        //   alert("Save Complete");
+                        // app.progres = "";
+
+                        // app.datProg.progress = decodeURIComponent(app.datProg.progress);
+                        // app.dataProgress.push(app.datProg);
+
+
+                    },
+                });
+
+
+
           alert('data telah terkirim');
-          this.showoff();
+          this.mshow1000kalimat();
+          this.kritik = {};
         },
         myoutube(){
           // gscript
@@ -693,12 +781,84 @@
 
         // alert('selesai ambil data');
 
-      }
+      },
+      tampilIklan(){
+          setTimeout(() => this.iklan = true, 60000);
+          // alert("iklan");
+        },
+      tutupIklan(){
+        this.iklan = false;
+          setTimeout(() => this.iklan = true, 600000);
+          this.iklanKe +=1;
+        },
+      simpanLog() {
 
 
+                // if (this.datProg.tglProgress && this.datProg.progres) {
+                let d = new Date();
+                var tgl = d.getDate();
+                var bln = d.getMonth();
+                var thn = d.getFullYear();
+                var jam = d.getHours();
+                var menit = d.getMinutes();
+                var detik = d.getSeconds();
 
+                var waktu1 = thn + "-" + bln + "-" + tgl + "   (" + jam + ":" + menit + ":" + detik + ")"
+                // alert(waktu1)
+                this.inputan.waktu = waktu1;
+
+                // var ikegiatan = this.flash1.id.toString();
+                // var ideadline = this.tglProgres.toString();
+                // var idetail = this.progres.toString();
+                // this.datProg.id = waktu1;
+                // this.datProg.idMasalah = this.flash1.id.toString();
+
+                // this.datProg.progress = encodeURIComponent(this.datProg.progress);
+                // this.datProg.log = 1;
+
+                // var istatus = 1;
+                // var aaaaaaaaaaa = JSON.stringify(this.datProg);
+                // console.log(aaaaaaaaaaa);
+                var lin = `https://script.google.com/macros/s/AKfycby3SieDanWEKR56NOLQAhXtJ50lDoLfBwXzzyz8s3LAlo-d68lMbUu0oAU33LzrcQkYQA/exec?action=insert&table=log&data=${JSON.stringify(this.inputan)}`;
+
+                // var lin = `https://script.google.com/macros/s/AKfycbyZFjDBgwz2oE_pEwKb3dW8GQsAm1snHxYpFIQZFFVIN7Ur3y6nhQ1hDYXJWvX5xSJZNw/exec?action=insert&table=progress&data={"id":${waktu1}, "idMasalah":"'${ikegiatan}","tglprogress":"'${ideadline}","progress":"'${idetail}","log":"1"}`;
+
+                // this.test = lin;
+                this.urll = lin;
+
+                // fetch(lin)
+                //   .then(() => {
+                //     app.progres = "";
+                //     app.datProg.progress = decodeURIComponent(app.datProg.progress);
+                //     app.dataProgress.push(app.datProg);
+                //   })
+
+
+                //metode lama pake ajax
+                $.ajax({
+                    type: "GET",
+                    url: lin,
+                    crossDomain: true,
+                    dataType: "jsonp",
+                    dataType: "text",
+                    success: function (resultData) {
+                        //   alert("Save Complete");
+                        // app.progres = "";
+
+                        // app.datProg.progress = decodeURIComponent(app.datProg.progress);
+                        // app.dataProgress.push(app.datProg);
+
+
+                    },
+                });
 
       },
+
+
+
+
+
+    },
       watch: {
         soal_saat_ini(){
           this.kunci = this.soal_saat_ini.arti;
@@ -724,16 +884,27 @@
 
         tambahkan(){
           alert('tambah');
-        }
+        },
+
 
 
       },
       created(){
+
+         // create log
+            this.simpanLog();
+
         this.dataSoal = this.kalimat;
         // gscript
           // google.script.run.diakses();
         
         this.ambilData();
+
+        // this.tampilIklan();
+
+        this.ambil5000();
+
+        this.ambilIklan();
 
         // alert('tes');
 
@@ -754,8 +925,12 @@
 
 
       data: {
+            inputan:{},
+            dataIklan:[],
+            iklan :false,
+            iklanKe:0,
             cari:'',
-            pilihanmenu: 1,
+            pilihanmenu: 3,
             judul:'',
             tombolStart:false,
             dataTambahan:[],
@@ -767,7 +942,7 @@
             soalkalimat:false,
             nama:'',
             email:'',
-            kritik:'',
+            kritik:{},
             kunci:'',
             total_point:0,
             point:0,
