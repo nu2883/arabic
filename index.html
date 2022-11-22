@@ -91,6 +91,8 @@
             background-color: #fff
         }
 
+
+
         [tabindex="-1"]:focus:not(:focus-visible) {
             outline: 0!important
         }
@@ -10764,8 +10766,8 @@
                         <h3>DATA
                             <!-- <select v-model="pilihanmenu" @change="onChange($event)" class="form-select" aria-label="Default select example">
                                 <option v-for="item in DataMenu" :key="item.id" selected value="1">{{item.nama}}</option>
-                                <!-- <option value="2">Fiil - Kata Kerja</option>
-                                <option value="3">5000 kata bahasa Inggris</option> -->
+                                <option value="2">Fiil - Kata Kerja</option>
+                                <option value="3">5000 kata bahasa Inggris</option>
 
                             </select> -->
                         </h3>
@@ -10850,7 +10852,7 @@
                     <div class="card-body">
 
                         <div class="mb-3" v-if="kata_salah.length > 0" v-for="a in kata_salah">
-                            <span class="text-danger display-4 ">
+                            <span class="text-danger h4 ">
                                 <b> {{a.kata}} </b>
                             </span>
                             <span> {{a.arti}} </span>
@@ -10928,23 +10930,23 @@
                             <!-- {{pilihanmenu}} -->
 
                             <input v-model="jenis_soal" type="radio" id="age3" name="age1" value="1">
-                            <label for="age1"> per level kata
+                            <label for="age1">per level
                                 <b class="text-primary">
                                     <span @click="mshow5000kata"> ({{jumlahSoal}} soal) </span>
                                 </b>
                             </label>
                             <input class="ml-5" v-model="jenis_soal" type="radio" id="age4" name="age1" value="2">
-                            <label for="age2"> komulatif level kata</label>
+                            <label for="age2"> komulatif level</label>
                             <br>
                         </div>
 
                         <div class="row">
                             <div v-if="jenis_soal==1" class="col-md-4 col-6" v-for="no,index in Math.ceil(dataSoal.length/this.jumlahSoal)">
-                                <button @click="pilihLevel(index)" class="btn btn-primary btn-sm mr-1 mt-2 btn-block">Level {{index+1}} </button>
+                                <button v-if="dataSoal.length > 0" @click="pilihLevel(index)" :class="borderMerah(index)">Level {{index+1}} </button>
                             </div>
 
                             <div v-if="jenis_soal==2" class="col-md-4 col-6" v-for="no,index in Math.ceil(dataSoal.length/this.jumlahSoal)">
-                                <button @click="pilihLevel(index)" class="btn btn-primary btn-sm mr-1 mt-2 btn-block">{{(index+1)*jumlahSoal}} kata</button>
+                                <button @click="pilihLevel(index)" :class="borderMerah(index)">{{(index+1)*jumlahSoal}} kata</button>
                             </div>
 
                             <br>
@@ -10995,14 +10997,14 @@
                     <span class="text-success">Correct: {{correct}}</span>
                     <span class="text-danger">Wrong: {{wrong}}</span>
                 </div>
-                <div class="display-4 text-center" @click="say(soal_saat_ini.kata)">
+                <div class="h2 text-center" @click="say(soal_saat_ini.kata)">
                     <b>
                         <!-- <svg xmlns="http://www.w3.org/2000/svg" width="46" height="46" fill="currentColor" class="bi bi-volume-up" viewBox="0 0 16 16">
               <path d="M11.536 14.01A8.473 8.473 0 0 0 14.026 8a8.473 8.473 0 0 0-2.49-6.01l-.708.707A7.476 7.476 0 0 1 13.025 8c0 2.071-.84 3.946-2.197 5.303l.708.707z"/>
               <path d="M10.121 12.596A6.48 6.48 0 0 0 12.025 8a6.48 6.48 0 0 0-1.904-4.596l-.707.707A5.483 5.483 0 0 1 11.025 8a5.483 5.483 0 0 1-1.61 3.89l.706.706z"/>
               <path d="M10.025 8a4.486 4.486 0 0 1-1.318 3.182L8 10.475A3.489 3.489 0 0 0 9.025 8c0-.966-.392-1.841-1.025-2.475l.707-.707A4.486 4.486 0 0 1 10.025 8zM7 4a.5.5 0 0 0-.812-.39L3.825 5.5H1.5A.5.5 0 0 0 1 6v4a.5.5 0 0 0 .5.5h2.325l2.363 1.89A.5.5 0 0 0 7 12V4zM4.312 6.39L6 5.04v5.92L4.312 9.61A.5.5 0 0 0 4 9.5H2v-3h2a.5.5 0 0 0 .312-.11z"/>
           </svg> -->
-                        <span class="display-5">{{soal_saat_ini.kata}}</span>
+                        <span class="">{{soal_saat_ini.kata}}</span>
                     </b>
                     <span> </span>
                     </b>
@@ -11229,6 +11231,7 @@
                         this.soal_ke = 0;
                     },
                     pilihLevel(n) {
+                        this.borderM = n;
                         this.showHasil = false;
                         this.level = n;
                         soal_ke = 0;
@@ -11517,6 +11520,16 @@
                         });
 
                     },
+                    borderMerah(x) {
+                        if (x == this.borderM) {
+                            return "btn btn-primary btn-sm mr-1 mt-2 btn-block "
+                        } else {
+                            return "btn btn-outline-primary btn-sm mr-1 mt-2 btn-block bor-merah"
+                        }
+                    },
+
+
+
 
 
 
@@ -11549,6 +11562,7 @@
                     tambahkan() {
                         alert('tambah');
                     },
+
 
 
 
@@ -11592,6 +11606,7 @@
 
 
                 data: {
+                    borderM: '',
                     dataMenu: [],
                     inputan: {},
                     dataIklan: [],
