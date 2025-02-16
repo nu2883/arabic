@@ -10688,9 +10688,10 @@
                 <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
                     <div class="navbar-nav">
                         <!-- <li @click="mshow1000kata()" class="nav-item nav-link text-primary" href="">1000 kata</li> -->
-                        <li @click="mshow1000kalimat" class="nav-item nav-link text-primary" href="">Kosakata</li>
-                        <li @click="mshowKamus" class="nav-item nav-link text-primary" href="">Kamus</li>
+                        <!-- <li @click="mshow1000kalimat" class="nav-item nav-link text-primary" href="">Kosakata</li>
+                        <li @click="mshowKamus" class="nav-item nav-link text-primary" href="">Kamus</li> -->
                         <li @click="mshow5000kata" class="nav-item nav-link text-primary" href="">Setting Jumlah Soal</li>
+                        <li @click="mshowToefl" class="nav-item nav-link text-primary" href="">TOEFL</li>
                         <li @click="mshowKritik" class="nav-item nav-link text-success" href="">Kritik dan Saran</li>
                         <!-- <a class="nav-item nav-link" href="#">200 kata kerja</a>
             <a class="nav-item nav-link" href="#">200 kata kerja</a>
@@ -10760,6 +10761,76 @@
                 </transition>
                 <!-- showKritik -->
 
+                                <!-- showToefl -->
+                                <transition name="bounce">
+                                    <div v-if="toefl" class="mt-2">
+                                        <h2 style="text-align: center; margin-bottom: 20px;">TOEFL Error Identification</h2>
+<!-- {{currentQuestion}} -->
+                                        <!-- Notifikasi -->
+                                        <div v-if="notificationMessage"
+                                            :style="{
+                                                padding: '10px',
+                                                borderRadius: '5px',
+                                                textAlign: 'center',
+                                                marginBottom: '10px',
+                                                fontWeight: 'bold',
+                                                color: 'white',
+                                                backgroundColor: notificationType === 'success' ? '#28a745' : '#dc3545'
+                                            }">
+                                            {{ notificationMessage }}
+                                        </div>
+                                
+                                        <div v-if="currentQuestion" style="border: 1px solid #ddd; padding: 15px; border-radius: 5px;">
+                                            <p><strong> {{ currentQuestion.Kalimat }}</strong></p>
+                                
+                                            <div v-for="(option, key) in currentQuestion.options" :key="key" style="margin-bottom: 5px;">
+                                                <button
+                                                    :style="{
+                                                        display: 'block',
+                                                        width: '100%',
+                                                        padding: '10px',
+                                                        border: 'none',
+                                                        borderRadius: '5px',
+                                                        cursor: 'pointer',
+                                                        fontSize: '16px',
+                                                        backgroundColor: selected && key === 'A (Salah)' ? '#dc3545' :
+                                                                        selected && key === selected ? '#28a745' : '#007bff',
+                                                        color: 'white'
+                                                    }"
+                                                    @click="selectAnswer(key)">
+                                                     {{ option }}
+                                                </button>
+                                            </div>
+                                <br>
+                                            <div v-if="selected" style="margin-top: 10px;">
+                                                <br>
+                                                <!-- <button @click="toggleExplanation"
+                                                    style="padding: 10px; background-color: #17a2b8; color: white; border: none; border-radius: 5px; cursor: pointer; width: 100%; margin-bottom: 5px;">
+                                                    Penjelasan
+                                                </button> -->
+                                                <p  style="margin-top: 10px;"><strong>Penjelasan:</strong> {{ currentQuestion["E (Penjelasan Kesalahan)"] }}</p>
+                                                <!-- <button @click="toggleTranslation"
+                                                    style="padding: 10px; background-color: #ffc107; color: black; border: none; border-radius: 5px; cursor: pointer; width: 100%;">
+                                                    Arti
+                                                </button> --> <br>
+                                                <p  style="margin-top: 10px;"><strong>Arti:</strong> {{ currentQuestion["F (Arti Kalimat)"] }}</p>
+                                            </div>
+                                        </div>
+                                
+                                        <!-- Tombol Next -->
+                                        <button @click="nextQuestion"
+                                            style="position: fixed; bottom: 80px; right: 20px; background-color: #28a745; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer;">
+                                            Next
+                                        </button>
+                
+                                        <!-- {{dataTambahan}} -->
+                
+                
+                                    </div>
+                
+                                </transition>
+                                <!-- showToefl -->
+
                 <!-- showKamus -->
                 <transition name="bounce">
                     <div v-if="showKamus" class="mt-2">
@@ -10772,11 +10843,11 @@
                             </select> -->
                         </h3>
 
-                        <div>
+                        <!-- <div>
                             <div class="form-group">
                                 <input v-model="cari" autofocus type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="cari kata">
                             </div>
-                        </div>
+                        </div> -->
 
                         <div>
                             <div>
@@ -11062,10 +11133,10 @@
                             <button v-if="tombolStart" class="navbar btn btn-warning btn-block" @click="start">Start Game</button>
                         </div>
 
-                        <div v-if="!tombolStart">
+                        <!-- <div v-if="!tombolStart">
                             <input @click="mshowKamus" v-model="cari" autofocus type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
                                 placeholder="cari kata">
-                        </div>
+                        </div> -->
 
 
                     </div>
@@ -11193,11 +11264,23 @@
                         this.showKritik = false;
                         this.showKataSalah = false;
                         this.showSetting = false;
+                        this.toefl = false;
 
                         this.soal = [];
                         this.point = 0;
                         this.correct = 0;
                         this.wrong = 0;
+                    },
+                    mshowToefl(){
+                        this.showoff();
+                        this.toefl = true;
+                        this.soal_ke = 0;
+                        this.processQuestions();
+                        setTimeout(() => {
+                            this.ambilDataToeflError();
+                            
+                    }, 1500);
+                        
                     },
                     mshow1000kata() {
                         this.showoff();
@@ -11528,7 +11611,64 @@
                             return "btn btn-outline-primary btn-sm mr-1 mt-2 btn-block bor-merah"
                         }
                     },
+                    shuffleArray(array) {
+                    return array.sort(() => Math.random() - 0.5);
+                },
+                processQuestions() {
+                    this.shuffledQuestions = this.shuffleArray(this.dataTambahan).map(question => ({
+                        ...question,
+                        options: {
+                            "A (Salah)": question["A (Salah)"],
+                            "B": question["B"],
+                            "C": question["C"],
+                            "D": question["D"]
+                        }
+                    }));
+                },
+                selectAnswer(key) {
+                    this.selected = key;
 
+                    if (key === "A (Salah)") {
+                        this.notificationMessage = "✔️ Jawaban benar!";
+                        this.notificationType = "success";
+                    } else {
+                        this.notificationMessage = "❌ Jawaban salah!";
+                        this.notificationType = "error";
+                    }
+
+                    setTimeout(() => {
+                        this.notificationMessage = "";
+                    }, 2000);
+                },
+                toggleExplanation() {
+                    this.showExplanation = !this.showExplanation;
+                },
+                toggleTranslation() {
+                    this.showTranslation = !this.showTranslation;
+                },
+                nextQuestion() {
+                    if (this.currentQuestionIndex < this.shuffledQuestions.length - 1) {
+                        this.currentQuestionIndex++;
+                    } else {
+                        this.currentQuestionIndex = 0;
+                    }
+                    this.selected = null;
+                    this.showExplanation = false;
+                    this.showTranslation = false;
+                    this.notificationMessage = "";
+                    this.say(this.currentQuestion.Kalimat);
+                },
+                ambilDataToeflError(event) {
+                        // alert(event.target.value);
+
+                        this.DataScore = [];
+                        this.dataSoal = [];
+
+                        var url = 'https://script.google.com/macros/s/AKfycby3SieDanWEKR56NOLQAhXtJ50lDoLfBwXzzyz8s3LAlo-d68lMbUu0oAU33LzrcQkYQA/exec?action=read&table=1000toeflerror';
+                        $.getJSON(url, function (json) {
+                            app.dataTambahan = json.data;
+                            app.dataSoal = app.dataTambahan;
+                        });},
 
 
 
@@ -11589,6 +11729,7 @@
                     this.ambilIklan();
 
                     // alert('tes');
+                    
 
 
 
@@ -11599,8 +11740,13 @@
                             return blog.arti.toLowerCase().match(this.cari.toLowerCase()) ||
                                 blog.kata.toLowerCase().match(this.cari.toLowerCase())
                         });
-                    }
+                    },
+                    currentQuestion() {
+                    return this.shuffledQuestions[this.currentQuestionIndex] || null;
                 },
+
+                },
+                
 
 
 
@@ -11641,6 +11787,7 @@
                     soal_ke: 0,
                     dataSoal: [],
                     showSetting: false,
+                    toefl:false,
                     showSoal: false,
                     show1000kata: false,
                     show5000kata: false,
@@ -11649,6 +11796,14 @@
                     showKamus: false,
                     soal_saat_ini: [],
                     pilihan_acak: [],
+                 
+                    shuffledQuestions: [],
+                currentQuestionIndex: 0,
+                selected: null,
+                showExplanation: false,
+                showTranslation: false,
+                notificationMessage: "",
+                notificationType: "",
                     kalimat: [
                         { 'kata': 'هذَا', 'arti': 'ini (lk)' },
                         { 'kata': 'ذالِكَ', 'arti': 'itu (lk)' },
