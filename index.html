@@ -10681,7 +10681,7 @@
 
                 <!-- start game -->
                 <!-- <a v-else @click="mshow1000kalimat" class="navbar-brand" href="#"><h1>Learn Arabic-English</h1></a> -->
-         <a v-else @click="mshow1000kalimat" class="" href="#" style="text-decoration: none;">
+                <a v-else @click="mshow1000kalimat" class="" href="#" style="text-decoration: none;">
                     <h1>bit.ly/lar2021 </h1>
                 </a>
 
@@ -10766,6 +10766,11 @@
                                     <div v-if="toefl" class="mt-2">
                                         <h5 style="text-align: center; margin-bottom: 20px;">TOEFL Error Identification</h5>
 <!-- {{currentQuestion}} -->
+                             <!-- Tampilan Skor -->
+                             <div style="display: flex; justify-content: space-around; margin-bottom: 15px;">
+                                <p style="font-weight: bold; color: #28a745;">✔ Benar: {{ correctAnswers }}</p>
+                                <p style="font-weight: bold; color: #dc3545;">✘ Salah: {{ wrongAnswers }}</p>
+                            </div>
                                         <!-- Notifikasi -->
                                         <!-- <div v-if="notificationMessage"
                                             :style="{
@@ -10780,7 +10785,7 @@
                                             {{ notificationMessage }}
                                         </div> -->
                                 
-                                                 <div v-if="currentQuestion" style="border: 1px solid #ddd; padding: 15px; border-radius: 5px;">
+                                        <div v-if="currentQuestion" style="border: 1px solid #ddd; padding: 15px; border-radius: 5px;">
                                             <p @click="say(currentQuestion.Kalimat)"><strong> {{ currentQuestion.Kalimat }}</strong>
                                                 <button @click="say(currentQuestion.Kalimat)" style="border: none; background: none; cursor: pointer;">
                                                     🔊
@@ -10788,6 +10793,7 @@
                                 
                                             <div v-for="(option, key) in currentQuestion.shuffledOptions" :key="key" style="margin-bottom: 5px;">
                                                 <button
+                                                :disabled="selected !== null" 
                                                     :style="{
                                                         display: 'block',
                                                         width: '100%',
@@ -10816,14 +10822,16 @@
                                                     style="padding: 10px; background-color: #ffc107; color: black; border: none; border-radius: 5px; cursor: pointer; width: 100%;">
                                                     Arti
                                                 </button> --> 
-                                                
+
+
                                                 <p  style="margin-top: 10px;"><strong>Arti:</strong> {{ currentQuestion["F (Arti Kalimat)"] }}</p>
                                             </div>
+                                            <br><br><br>
                                         </div>
                                 
                                         <!-- Tombol Next -->
                                         <button @click="nextQuestion"
-                                            style="position: fixed; bottom: 80px; right: 20px; background-color: #28a745; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer;">
+                                            style="position: fixed; bottom: 50px; right: 20px; background-color: #28a745; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer;">
                                             Next
                                         </button>
                 
@@ -11635,9 +11643,11 @@
                     if (key === "A (Salah)") {
                         this.notificationMessage = "✔️ Jawaban benar!";
                         this.notificationType = "success";
+                        this.correctAnswers +=1;
                     } else {
                         this.notificationMessage = "❌ Jawaban salah!";
                         this.notificationType = "error";
+                        this.wrongAnswers +=1;
                     }
 
                     setTimeout(() => {
@@ -11745,7 +11755,7 @@
                                 blog.kata.toLowerCase().match(this.cari.toLowerCase())
                         });
                     },
-                     currentQuestion() {
+                    currentQuestion() {
         let question = this.shuffledQuestions[this.currentQuestionIndex] || null;
         
         if (question) {
@@ -11826,6 +11836,9 @@
                 showTranslation: false,
                 notificationMessage: "",
                 notificationType: "",
+                    correctAnswers: 0, // Menyimpan jumlah jawaban benar
+        wrongAnswers: 0,   // Menyimpan jumlah jawaban salah
+        selected: null,    // Menyimpan pilihan user
                     kalimat: [
                         { 'kata': 'هذَا', 'arti': 'ini (lk)' },
                         { 'kata': 'ذالِكَ', 'arti': 'itu (lk)' },
