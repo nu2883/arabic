@@ -11741,9 +11741,27 @@
                                 blog.kata.toLowerCase().match(this.cari.toLowerCase())
                         });
                     },
-                    currentQuestion() {
-                    return this.shuffledQuestions[this.currentQuestionIndex] || null;
-                },
+                     currentQuestion() {
+        let question = this.shuffledQuestions[this.currentQuestionIndex] || null;
+        
+        if (question) {
+            // Ambil kunci (A, B, C, D) dan nilainya, lalu ubah menjadi array
+            let optionsArray = Object.entries(question.options);
+
+            // Acak array pilihan jawaban
+            let shuffledArray = optionsArray.sort(() => Math.random() - 0.5);
+
+            // Ubah kembali menjadi objek dengan format asli
+            let shuffledOptions = Object.fromEntries(shuffledArray);
+
+            // Kembalikan soal dengan shuffledOptions dalam format objek
+            return {
+                ...question,
+                shuffledOptions: shuffledOptions
+            };
+        }
+        return null;
+    },
 
                 },
                 
