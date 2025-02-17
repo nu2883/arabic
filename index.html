@@ -10780,10 +10780,13 @@
                                             {{ notificationMessage }}
                                         </div> -->
                                 
-                                        <div v-if="currentQuestion" style="border: 1px solid #ddd; padding: 15px; border-radius: 5px;">
-                                            <p><strong> {{ currentQuestion.Kalimat }}</strong></p>
+                                                 <div v-if="currentQuestion" style="border: 1px solid #ddd; padding: 15px; border-radius: 5px;">
+                                            <p @click="say(currentQuestion.Kalimat)"><strong> {{ currentQuestion.Kalimat }}</strong>
+                                                <button @click="say(currentQuestion.Kalimat)" style="border: none; background: none; cursor: pointer;">
+                                                    🔊
+                                                </p></button>
                                 
-                                            <div v-for="(option, key) in currentQuestion.options" :key="key" style="margin-bottom: 5px;">
+                                            <div v-for="(option, key) in currentQuestion.shuffledOptions" :key="key" style="margin-bottom: 5px;">
                                                 <button
                                                     :style="{
                                                         display: 'block',
@@ -10801,9 +10804,9 @@
                                                      {{ option }}
                                                 </button>
                                             </div>
-                                <br>
+                               
                                             <div v-if="selected" style="margin-top: 10px;">
-                                                <br>
+                                             
                                                 <!-- <button @click="toggleExplanation"
                                                     style="padding: 10px; background-color: #17a2b8; color: white; border: none; border-radius: 5px; cursor: pointer; width: 100%; margin-bottom: 5px;">
                                                     Penjelasan
@@ -10812,7 +10815,8 @@
                                                 <!-- <button @click="toggleTranslation"
                                                     style="padding: 10px; background-color: #ffc107; color: black; border: none; border-radius: 5px; cursor: pointer; width: 100%;">
                                                     Arti
-                                                </button> --> <br>
+                                                </button> --> 
+                                                
                                                 <p  style="margin-top: 10px;"><strong>Arti:</strong> {{ currentQuestion["F (Arti Kalimat)"] }}</p>
                                             </div>
                                         </div>
