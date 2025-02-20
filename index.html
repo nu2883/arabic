@@ -10777,7 +10777,7 @@
                                     <div v-if="toefl" class="mt-2">
                                         <!-- <h5 style="text-align: center; margin-bottom: 20px;">TOEFL Error Identification</h5> -->
 <!-- {{currentQuestion}} --> 
-<div class="text-center">
+<div class="text-center mb-2">
     <select class="form-select mx-auto" v-model="selectToefl" @change="pilihToefl(selectToefl)"
         style="width: 300px; padding: 5px; font-size: 16px; border-radius: 8px; 
                border: 2px solid #007bff; background: #f8f9fa; color: #333; 
@@ -11135,13 +11135,14 @@
               <path d="M10.121 12.596A6.48 6.48 0 0 0 12.025 8a6.48 6.48 0 0 0-1.904-4.596l-.707.707A5.483 5.483 0 0 1 11.025 8a5.483 5.483 0 0 1-1.61 3.89l.706.706z"/>
               <path d="M10.025 8a4.486 4.486 0 0 1-1.318 3.182L8 10.475A3.489 3.489 0 0 0 9.025 8c0-.966-.392-1.841-1.025-2.475l.707-.707A4.486 4.486 0 0 1 10.025 8zM7 4a.5.5 0 0 0-.812-.39L3.825 5.5H1.5A.5.5 0 0 0 1 6v4a.5.5 0 0 0 .5.5h2.325l2.363 1.89A.5.5 0 0 0 7 12V4zM4.312 6.39L6 5.04v5.92L4.312 9.61A.5.5 0 0 0 4 9.5H2v-3h2a.5.5 0 0 0 .312-.11z"/>
           </svg> -->
-                        <span class="">{{soal_saat_ini.kata}}</span>
+                        <span class="">{{soal_saat_ini.kata}}</span><span v-if="soal_saat_ini.kata1">-{{soal_saat_ini.kata1 }}</span>
                     </b>
                     <span> </span>
                     </b>
                 </div>
+                <!-- {{soal_saat_ini}}
                 <br>
-
+<br>{{dataTambahan}} -->
                 <div v-if="soalkalimat" class="text-center">
                     <button v-if="soal_ke % 2 == 0" class="btn btn-block btn-sm btn-info mr-3 mt-1 btn-block mb-3" v-for="a in pilihan" @click="jawab(a)">
                         {{a}}
@@ -11750,11 +11751,13 @@
                         },
                         pilihToefl(a){
                             if(a=='error'){
+                                this.dataTambahan = [];
                                 this.selected = null;
                                 this.wrongAnswers = null;
                                 this.correctAnswers = null;
                                 this.ambilDataToeflError();
                             }else{
+                                this.dataTambahan = [];
                                 this.selected = null;
                                 this.wrongAnswers = null;
                                 this.correctAnswers = null;
