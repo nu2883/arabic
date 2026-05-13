@@ -532,11 +532,17 @@
       cursor: not-allowed;
     }
 
-    .choice-btn.wrong {
-      border-color: var(--red) !important;
-      background: var(--red-glow) !important;
-      animation: shake .35s ease;
-    }
+    .choice-btn.correct {
+  background-color: #d4edda !important;
+  border-color: #28a745 !important;
+  color: #155724 !important;
+}
+
+.choice-btn.wrong {
+  background-color: #f8d7da !important;
+  border-color: #dc3545 !important;
+  color: #721c24 !important;
+}
 
     .choice-letter {
       width: 26px;
@@ -899,17 +905,13 @@
         <div class="logo">كويز عربي</div><br>
         <div class="logo-sub">Arabic Vocab Quest · {{ vocabData.length }} Kata</div>
 
-        
-<!-- Container untuk centering dan spacing -->
-<div style="display: flex; justify-content: center; width: 100%; margin: 20px 0;">
-    
-    <!-- Select dengan inline styling yang lebih modern -->
-    <select 
-        v-model="pilihanmenu"  
-        @change="onChange($event)" 
-        class="form-select" 
-        aria-label="Default select example"
-        style="
+
+        <!-- Container untuk centering dan spacing -->
+        <div style="display: flex; justify-content: center; width: 100%; margin: 20px 0;">
+
+          <!-- Select dengan inline styling yang lebih modern -->
+          <select v-model="pilihanmenu" @change="onChange($event)" class="form-select"
+            aria-label="Default select example" style="
             width: 100%;
             max-width: 400px; 
             padding: 10px 15px; 
@@ -928,15 +930,12 @@
             background-repeat: no-repeat;
             background-position: right 15px top 50%;
             background-size: 12px auto;
-        "
-        onfocus="this.style.borderColor='#14b8a6'"
-        onblur="this.style.borderColor='#e0e0e0'"
-    >
-        <option v-for="item in dataMenu" :key="item.id" :value="item">
-            {{item.nama}}
-        </option>
-    </select>
-</div>
+        " onfocus="this.style.borderColor='#14b8a6'" onblur="this.style.borderColor='#e0e0e0'">
+            <option v-for="item in dataMenu" :key="item.id" :value="item">
+              {{item.nama}}
+            </option>
+          </select>
+        </div>
 
         <div class="card">
           <!-- Tab mode -->
@@ -970,15 +969,15 @@
               </button>
             </div>
 
-            <div class="sec-label" style="display:flex;justify-content:space-between;align-items:center;">
+            <div class="sec-label" style="display:flex;justify-content:space-between;align-items:center; margin-bottom: 10px;">
               <span>Pilih Level</span>
               <span style="font-weight:400;font-size:.65rem;color:var(--teal);">{{ totalLevels }} level · {{
                 vocabData.length }} soal</span>
             </div>
-            <div class="level-grid">
+            <div class="level-grid" style="padding: 10px;">
               <div v-for="lv in levelList" :key="lv.num" class="level-card" :class="{active:selectedLevel===lv.num}"
                 @click="selectedLevel=lv.num; saveSettings()">
-                <span class="lc-badge done" v-if="doneLevels.includes(lv.num)">✓</span>
+                <!-- <span class="lc-badge done" v-if="doneLevels.includes(lv.num)">✓</span> -->
                 <div class="lc-num">Lv {{ lv.num }}</div>
                 <div class="lc-range">{{ lv.rangeLabel }}</div>
               </div>
@@ -1030,17 +1029,36 @@
                   wrongVocab.length }})</button>
               </div>
 
-              <div class="wrong-list-title">Daftar Kata Salah <span class="badge">{{ wrongVocab.length }}</span></div>
-              <div class="wrong-item" v-for="w in wrongVocab.slice(0,5)" :key="w.id">
-                <div>
-                  <div class="wrong-item-arabic">{{ w.kata }}</div>
-                  <div class="wrong-item-arti">{{ w.arti }}</div>
-                </div>
-                <span style="color:var(--text-dim);font-size:.7rem;">✗{{ w.wrongCount }}×</span>
-              </div>
-              <div v-if="wrongVocab.length>5"
-                style="text-align:center;font-size:.7rem;color:var(--text-dim);margin-bottom:8px;">...dan {{
-                wrongVocab.length-5 }} kata lainnya</div>
+              <!-- Bagian Daftar Kata Salah -->
+<div class="wrong-list-title">Daftar Kata Salah <span class="badge">{{ wrongVocab.length }}</span></div>
+
+<!-- v-for sekarang menggunakan kondisi showAllWrong -->
+<div class="wrong-item" 
+     v-for="w in (showAllWrong ? sortedWrongVocab : sortedWrongVocab.slice(0, 5))" 
+     :key="w.id">
+  <div style="flex-grow: 1;">
+    <div class="wrong-item-arabic">{{ w.kata }}</div>
+    <div class="wrong-item-arti">{{ w.arti }}</div>
+  </div>
+  <div style="display: flex; align-items: center; gap: 10px;">
+    <span style="color:var(--text-dim);font-size:.7rem; font-weight: bold;">✗ {{ w.wrongCount || 1 }}</span>
+    <button @click="removeSingleWrong(w.id)" style="background:none; border:none; cursor:pointer; color:#ff5252; padding: 5px;">
+      🗑️
+    </button>
+  </div>
+</div>
+
+<!-- Tombol "Lihat Semua" / "Sembunyikan" -->
+<div v-if="wrongVocab.length > 5"
+     @click="showAllWrong = !showAllWrong"
+     style="text-align:center; font-size:.7rem; color:var(--accent); cursor:pointer; margin-bottom:8px; text-decoration: underline;">
+  <template v-if="!showAllWrong">
+    ...dan {{ wrongVocab.length - 5 }} kata lainnya
+  </template>
+  <template v-else>
+    Sembunyikan sebagian
+  </template>
+</div>
 
               <button class="action-btn ghost" style="width:100%;font-size:.76rem;" @click="clearWrong">🗑 Hapus semua
                 data salah</button>
@@ -1084,10 +1102,16 @@
           <div class="question-hint">Pilih arti yang benar</div>
 
           <div class="choices">
-            <button v-for="(choice,i) in currentQ.choices" :key="i" class="choice-btn" :class="{wrong:wrongChoice===i}"
-              :disabled="choiceDisabled && wrongChoice!==i" @click="answer(i)">
-              <span class="choice-letter">{{ ['A','B','C','D'][i] }}</span>{{ choice }}
-            </button>
+          <button v-for="(choice,i) in currentQ.choices" :key="i" 
+  class="choice-btn" 
+  :class="{
+    wrong: wrongChoice === i,
+    correct: choiceDisabled && i === currentQ.correctIdx 
+  }"
+  :disabled="choiceDisabled && wrongChoice !== i" 
+  @click="answer(i)">
+  <span class="choice-letter">{{ ['A','B','C','D'][i] }}</span>{{ choice }}
+</button>
           </div>
         </div>
       </div>
@@ -1144,21 +1168,25 @@
 
   </div>
 
-          <!-- Optional JavaScript -->
-        <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
-            crossorigin="anonymous"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
-            crossorigin="anonymous"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
-            crossorigin="anonymous"></script>
+  <!-- Optional JavaScript -->
+  <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+    integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+    crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+    integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+    crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+    integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+    crossorigin="anonymous"></script>
 
 
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
-            crossorigin="anonymous"></script>
- <!-- Bootstrap 5 JS -->
- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+    integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+    crossorigin="anonymous"></script>
+  <!-- Bootstrap 5 JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
   <script>
     // STARS
@@ -1208,7 +1236,7 @@
       data() {
         const s = loadJ(LS_SET, {});
         return {
-          
+
           screen: 'home',
           mainMode: 'level',
           soalPerSesi: s.soalPerSesi || 10,
@@ -1229,16 +1257,24 @@
           // persist
           wrongVocab: loadJ(LS_WRONG, []),
           doneLevels: loadJ(LS_DONE, []),
-            dataMenu: [],
-        D: [],
-        pilihanmenu: "",
-        dataSoal: [],
+          dataMenu: [],
+          D: [],
+          pilihanmenu: "",
+          dataSoal: [],
+          showAllWrong: false, // Tambahkan ini
         };
       },
       computed: {
+        sortedWrongVocab() {
+          // Kita buat salinan array agar tidak merusak urutan asli saat sorting
+          return [...this.wrongVocab].sort((a, b) => {
+            // Urutan: Salah sedikit di atas, Salah banyak di bawah
+            return (a.wrongCount || 0) - (b.wrongCount || 0);
+          });
+        },
         vocabData() {
-        return this.dataSoal;  // reaktif, otomatis update kalau dataSoal berubah
-    },
+          return this.dataSoal;  // reaktif, otomatis update kalau dataSoal berubah
+        },
         totalLevels() { return Math.ceil(this.vocabData.length / this.soalPerSesi); },
 
         levelList() {
@@ -1273,28 +1309,39 @@
       },
 
       methods: {
-//                      onChange(event) {
-//     this.dataSoal = [];
-//     var url = this.pilihanmenu.link;
+        //                      onChange(event) {
+        //     this.dataSoal = [];
+        //     var url = this.pilihanmenu.link;
 
-//     $.getJSON(url, (json) => {
-//         console.log(json.data); // ← lihat dulu di browser console
-//         this.dataSoal = json.data;
-//     });
-// },
+        //     $.getJSON(url, (json) => {
+        //         console.log(json.data); // ← lihat dulu di browser console
+        //         this.dataSoal = json.data;
+        //     });
+        // },
 
-onChange(event) {
-    this.dataSoal = [];
-    var url = this.pilihanmenu.link;
+        onChange(event) {
+          this.dataSoal = [];
+          var url = this.pilihanmenu.link;
 
-    $.getJSON(url, (json) => {
-        this.dataSoal = json.data;  // langsung assign, tidak perlu transform
-    });
-},
+          $.getJSON(url, (json) => {
+            this.dataSoal = json.data;  // langsung assign, tidak perlu transform
+          });
+        },
         saveSettings() { saveJ(LS_SET, { soalPerSesi: this.soalPerSesi, levelType: this.levelType, selectedLevel: this.selectedLevel }); },
         setSoalPerSesi(n) { this.soalPerSesi = n; this.selectedLevel = null; this.saveSettings(); },
 
-        saveWrong() { saveJ(LS_WRONG, this.wrongVocab); },
+        removeSingleWrong(id) {
+          if (confirm('Hapus kata ini dari memori Local Storage?')) {
+            // Filter array
+            this.wrongVocab = this.wrongVocab.filter(w => w.id !== id);
+            // Timpa data lama di Local Storage dengan data baru
+            this.saveWrong();
+          }
+        },
+
+        saveWrong() {
+          saveJ(LS_WRONG, this.wrongVocab);
+        },
         saveDone() { saveJ(LS_DONE, this.doneLevels); },
 
         addToWrong(v) {
@@ -1392,32 +1439,32 @@ onChange(event) {
 
 
 
-                    ambilMenu() {
-    
-    this.D = [];
+        ambilMenu() {
 
-    var url = "https://script.google.com/macros/s/AKfycby3SieDanWEKR56NOLQAhXtJ50lDoLfBwXzzyz8s3LAlo-d68lMbUu0oAU33LzrcQkYQA/exec?action=read&table=menu";
+          this.D = [];
 
-    $.getJSON(url, (json) => {   // ← arrow function, this tetap terikat
-        this.dataMenu = json.data;
-    });
-},
-                    
+          var url = "https://script.google.com/macros/s/AKfycby3SieDanWEKR56NOLQAhXtJ50lDoLfBwXzzyz8s3LAlo-d68lMbUu0oAU33LzrcQkYQA/exec?action=read&table=menu";
+
+          $.getJSON(url, (json) => {   // ← arrow function, this tetap terikat
+            this.dataMenu = json.data;
+          });
+        },
+
       },
-     created() {
+      created() {
 
-                    // ambil menu
-                    this.ambilMenu();
+        // ambil menu
+        this.ambilMenu();
 
-                    
-                    // this.ambilData();
 
-                    
+        // this.ambilData();
 
 
 
-                },
-               
+
+
+      },
+
     });
   </script>
 </body>
