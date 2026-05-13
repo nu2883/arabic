@@ -532,11 +532,7 @@
       cursor: not-allowed;
     }
 
-    .choice-btn.correct {
-  background-color: #d4edda !important;
-  border-color: #28a745 !important;
-  color: #155724 !important;
-}
+
 
 .choice-btn.wrong {
   background-color: #f8d7da !important;
@@ -1099,7 +1095,7 @@
           </div>
 
           <div class="arabic-word">{{ currentQ.kata }}</div>
-          <div class="question-hint">Pilih arti yang benar</div>
+          <div class="question-hint" tabindex="-1" ref="hint">Pilih arti yang benar</div>
 
           <div class="choices">
           <button v-for="(choice,i) in currentQ.choices" :key="i" 
@@ -1412,6 +1408,11 @@
               } else {
                 this.currentIdx++;
                 this.wrongChoice = null; this.choiceDisabled = false;
+
+                 this.$nextTick(() => {
+                    const el = document.querySelector('.question-hint');
+                    if(el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                });
               }
             }, 400);
           } else {
