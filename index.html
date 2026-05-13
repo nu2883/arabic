@@ -522,11 +522,13 @@
       gap: 11px;
     }
 
+@media (hover: hover) and (pointer: fine) {
     .choice-btn:hover:not(:disabled) {
-      border-color: var(--teal);
-      background: rgba(13, 148, 136, .1);
-      transform: translateX(4px);
+        border-color: var(--teal);
+        background: rgba(13,148,136,.1);
+        transform: translateX(4px);
     }
+}
 
     .choice-btn:disabled {
       cursor: not-allowed;
